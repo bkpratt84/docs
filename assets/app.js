@@ -7,6 +7,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import Vuetify from 'vuetify'
 import VeeValidate from 'vee-validate'
+import VueClipboard from 'vue-clipboard2'
 import Components from '../components'
 
 import { createStore } from 'store/index'
@@ -15,6 +16,7 @@ import { sync } from 'vuex-router-sync'
 
 Vue.use(Vuetify)
 Vue.use(VeeValidate, { inject: false })
+Vue.use(VueClipboard)
 
 Object.keys(Components).forEach(key => {
   Vue.component(key, Components[key])

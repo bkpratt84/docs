@@ -3,6 +3,15 @@
     codepen(ref="codepen" :pen="pen")
     v-card
       v-toolbar(v-bind:color="currentColor" flat dense dark)
+        v-tooltip(bottom)
+          v-btn(
+            dark
+            icon
+            v-clipboard:copy="copyURL"
+            slot="activator"
+          )
+            v-icon link
+          span Copy url to clipboard
         span.title.white--text.layout.align-end {{ header }}
           span(v-if="newIn").ml-2.body-2.red--text.text--lighten-2 (New in {{ newIn }}+)
         v-spacer
@@ -85,19 +94,24 @@
           style: null,
           template: null
         },
-        url: release ? 'releases/' + release + '/' : ''
+        url: release ? 'releases/' + release + '/' : '',
+        window: null
       }
     },
 
     props: {
       file: String,
       header: String,
-      newIn: String
+      newIn: String,
+      anchor: String
     },
 
     computed: {
       currentColor () {
         return this.$store.state.currentColor
+      },
+      copyURL () {
+          return this.window ? this.window.location.origin + this.$route.path + '#' + this.anchor : ''
       }
     },
 
@@ -112,6 +126,8 @@
     },
 
     mounted () {
+      this.window = window
+      
       this.uid = this._uid
       const vm = this
       import(

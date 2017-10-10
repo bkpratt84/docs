@@ -48,9 +48,10 @@
       v-for="(example, i) in doc.examples"
       v-bind:key="i"
       v-bind:header="`#${i + 1} ${example.header}`"
+      v-bind:anchor="anchorID(example)"
       v-bind:new-in="example.new"
       v-bind:file="example.file"
-      v-bind:id="`example-${i + 1}`"
+      v-bind:id="anchorID(example)"
     )
       div(slot="desc" v-html="example.desc" v-if="example.desc")
     slot
@@ -128,7 +129,52 @@
       }
     },
 
+    methods: {
+      anchorID (example) {
+        return example.file.split('/', 2)[1]
+      },
+      scrollTo: function() {
+        if (this.$route.hash) {
+          let anchor = this.$route.hash.replace('#', '')
+
+          const element = document.getElementById(anchor)
+          const toolbar = document.getElementById('main-toolbar')
+
+          if (element && toolbar) {
+            window.scrollTo(0, this.scrollOffset(element, toolbar, -10))
+          }
+        }
+      },
+      scrollOffset: function (to, toolbar, offset) {
+        let position = 0
+
+        if (to) {
+          position += to.offsetTop
+        }
+
+        if (toolbar) {
+          position -= toolbar.clientHeight
+        }
+
+        if (offset) {
+          position += offset
+        }
+
+        if (position < 0) {
+          position = 0
+        }
+
+        return position
+      },
+    },
+
     mounted () {
+      this.$nextTick(function () {
+        window.addEventListener('load', () => {
+          this.scrollTo()
+        })
+      })
+      
       if (this.doc.props) {
         const props = Object.keys(this.doc.props)
 
